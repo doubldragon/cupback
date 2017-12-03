@@ -24,9 +24,10 @@ class DefaultController extends Controller
      */
     public function submitAction(Request $request)
     {
-        dump($request);
+        $resp = $request->request->all();
+        dump($request->request->all());
         return $this->render('complete.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'resp' => $resp,
         ]);
     }
 }
