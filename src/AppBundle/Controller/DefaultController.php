@@ -5,6 +5,9 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\Transaction;
 
 class DefaultController extends Controller
 {
@@ -29,5 +32,25 @@ class DefaultController extends Controller
         return $this->render('complete.html.twig', [
             'resp' => $resp,
         ]);
+    }
+
+    public function createAction() {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $order = new Transaction();
+        $order->setName('Keyboard');
+        $order->setTotal(19.99);
+        $order->setQuantity(3);
+        $order->setStreet("104 place st");
+        $order->setDescription('Ergonomic and stylish!');
+
+        // tells Doctrine you want to (eventually) save the order (no queries yet)
+        $em->persist($order);
+
+        // actually executes the queries (i.e. the INSERT query)
+        $em->flush();
+
+        return new Response('Saved new order with id '.$order->getId());
     }
 }
