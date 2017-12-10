@@ -28,22 +28,53 @@ class DefaultController extends Controller
     public function submitAction(Request $request)
     {
         $resp = $request->request->all();
-        dump($request->request->all());
-        return $this->render('complete.html.twig', [
+
+        dump(in_array("isLocal", $resp));
+        $stripeToken = $resp['stripeToken'];
+        \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
+        //$token = $_POST[$stripeToken];
+        $charge = \Stripe\Charge::create(array(
+            "amount" => $resp['gTotal'],
+            "currency" => "usd",
+            "description" => $resp['stripeShippingName'] . " - " . $resp['numBags'] . " bags",
+            "source" => $stripeToken,
+        ));
+
+        //dump($charge);
+
+
+        $this->createAction($resp);
+        $this->emailAction($resp);
+
+
+        return $this->redirectToRoute('complete', [
             'resp' => $resp,
         ]);
     }
 
-    public function createAction() {
+    public function emailAction($resp) {
+        
+
+    }
+
+    public function createAction($req) {
+        dump($req);
 
         $em = $this->getDoctrine()->getManager();
+        $isLocal = in_array("isLocal" , $req);
 
         $order = new Transaction();
-        $order->setName('Keyboard');
-        $order->setTotal(19.99);
-        $order->setQuantity(3);
-        $order->setStreet("104 place st");
-        $order->setDescription('Ergonomic and stylish!');
+        $order->setName($req['stripeShippingName']);
+        $order->setEmail($req['stripeEmail']);
+        $order->setTotal($req['gTotal']/100);
+        $order->setQuantity($req['numBags']);
+        $order->setRoast($req['roastLevel']);
+        $order->setStreet($req['stripeShippingAddressLine1']);
+        $order->setCity($req['stripeShippingAddressCity']);
+        $order->setState($req['stripeShippingAddressState']);
+        $order->setZipcode($req['stripeShippingAddressZip']);
+        $order->setIsLocal($isLocal);
+        $order->setComments($req['comments']);
 
         // tells Doctrine you want to (eventually) save the order (no queries yet)
         $em->persist($order);
@@ -51,6 +82,20 @@ class DefaultController extends Controller
         // actually executes the queries (i.e. the INSERT query)
         $em->flush();
 
-        return new Response('Saved new order with id '.$order->getId());
+        return new Response($order->getId());
+    }
+
+    /**
+     * @Route("/complete", name="complete")
+     */
+
+    public function completeAction(Request $request) {
+        $request = $request->query->all();
+        $resp = $request['resp'];
+
+        dump($resp);
+        return $this->render("complete.html.twig", [
+            "resp" => $resp
+        ]);
     }
 }

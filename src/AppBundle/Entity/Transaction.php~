@@ -85,6 +85,12 @@ class Transaction
     private $roast;
 
     /**
+     *
+     * @ORM\Column(name="comments", type="text")
+     */
+    private $comments;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="total", type="float")
@@ -316,5 +322,29 @@ class Transaction
     public function getTotal()
     {
         return $this->total;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Transaction
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }

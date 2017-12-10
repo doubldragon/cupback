@@ -31,26 +31,30 @@
                     <option value="medium">Medium</option>
                     <option value="dark">Dark</option>
                 </select>
-                <textarea class="form-control mt-3 mb-3" placeholder="Comments..." id="comments"></textarea>
+                <textarea class="form-control mt-3 mb-3" placeholder="Comments..." name="comments" id="comments"></textarea>
                 <p id="output"></p>
                 <label class="form-check-label mb-3">
                     <input type="checkbox" id="isLocal" name="isLocal" class="form-check-input" onChange="updateTotal()">
                     Local Pickup
                 </label><br>
                 <input type="hidden" value="600" id="ship" name="ship">
+                <input type="hidden" value="0" id="gTotal" name="gTotal">
                 <script>
 
                     function updateTotal()
                     {
-                        ship.value
+
                         isLocal = document.getElementById("isLocal").checked;
                         numBags = document.getElementById("numBags").value;
                         total = numBags * 1200;
                         if (!isLocal){
                             total += 600;
                         }
-                        ship.value=
-                        output.innerHTML = "Your Total is: $" + (total/100).toFixed(2);
+                        ship.value = isLocal ? 0 : 600;
+                        gTotal.value = total;
+                        value = document.getElementById("gTotal");
+                        console.log(value);
+                        output.innerHTML = "Your Total is $" + (total/100).toFixed(2);
                     }
 
                 </script>
@@ -60,7 +64,7 @@
 
                         src="https://checkout.stripe.com/checkout.js" class="stripe-button"
 
-                        data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                        data-key="pk_test_GVSOjpUzr1I62dixDWzP43B2"
                         data-label="I Need Coffee!"
                         {#data-amount="1800"#}
                         data-name="Caneland Coffee"
