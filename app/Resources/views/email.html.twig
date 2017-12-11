@@ -1,0 +1,26 @@
+<h1>Thanks for your order!</h1>
+
+<p> Everything will get roasted and packaged over the coming week, and shipping out around December 18, so everything
+should arrive in time for Christmas.
+</p>
+
+<h3>Your Order:</h3>
+    <p>{{ numBags }} bags of tasty coffee<br>
+        Roast: {{ roastLevel }} (subject to availability) <br>
+        Total: ${{ gTotal/100 }}
+    </p>
+{%  if isLocal %}
+    <h3>Local Delivery:</h3>
+    <p>If you haven't reached out either in the comments or personally, I will get in touch with you on making the handoff.</p>
+{% else %}
+{#{% if isLocal == null %}#}
+    <h3>Shipping Address:</h3>
+    <p>
+    {{ stripeShippingAddressLine1 }}<br>
+    {{ stripeShippingAddressCity }}, {{ stripeShippingAddressState }} {{ stripeShippingAddressZip }}
+    </p>
+{% endif %}
+
+<h3>Comments:</h3>
+<p>{{ comments }}</p>
+

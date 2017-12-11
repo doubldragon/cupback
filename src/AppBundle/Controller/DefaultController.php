@@ -32,7 +32,6 @@ class DefaultController extends Controller
         dump(in_array("isLocal", $resp));
         $stripeToken = $resp['stripeToken'];
         \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
-        //$token = $_POST[$stripeToken];
         $charge = \Stripe\Charge::create(array(
             "amount" => $resp['gTotal'],
             "currency" => "usd",
@@ -40,12 +39,8 @@ class DefaultController extends Controller
             "source" => $stripeToken,
         ));
 
-        //dump($charge);
-
-
         $this->createAction($resp);
         $this->emailAction($resp);
-
 
         return $this->redirectToRoute('complete', [
             'resp' => $resp,
@@ -53,7 +48,17 @@ class DefaultController extends Controller
     }
 
     public function emailAction($resp) {
-        
+
+        $resp['isLocal'] = in_array('isLocal', $resp);
+        $message = \Swift_Message::newInstance()
+            ->setSubject("Don't Call It a Cupback 2K17")
+            ->setFrom($this->getParameter('mailer_user'))
+            ->setBcc($this->getParameter('my_email'))
+            ->setTo($resp['stripeEmail'], $resp['stripeBillingName'])
+            ->setBody($this->renderView("email.html.twig", $resp), "text/html");
+
+        $this->get("mailer")->send($message);
+
 
     }
 
