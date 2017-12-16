@@ -29,7 +29,6 @@ class DefaultController extends Controller
     {
         $resp = $request->request->all();
 
-        dump(in_array("isLocal", $resp));
         $stripeToken = $resp['stripeToken'];
         \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
         $charge = \Stripe\Charge::create(array(
@@ -63,7 +62,6 @@ class DefaultController extends Controller
     }
 
     public function createAction($req) {
-        dump($req);
 
         $em = $this->getDoctrine()->getManager();
         $isLocal = in_array("isLocal" , $req);
@@ -98,7 +96,6 @@ class DefaultController extends Controller
         $request = $request->query->all();
         $resp = $request['resp'];
 
-        dump($resp);
         return $this->render("complete.html.twig", [
             "resp" => $resp
         ]);
